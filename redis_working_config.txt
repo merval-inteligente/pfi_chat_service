@@ -1,0 +1,3 @@
+# Configuración Redis funcionando
+REDIS_URL=rediss://default:ASRBAAIjcDE4YjM3YmZiYWY0MTA0ZjUwYTJjOGZiMTJmZmIyYzljNXAxMA@stable-hog-9281.upstash.io:6379
+# Fecha test: 2025-08-04 20:33:26.071514

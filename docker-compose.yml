@@ -1,0 +1,113 @@
+version: '3.8'
+
+services:
+  # Chat Service
+  chat-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chat-service
+    ports:
+      - "8081:8081"
+    environment:
+      - DEBUG=true
+      - ENVIRONMENT=development
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - REDIS_URL=redis://redis:6379/0
+      - DATABASE_URL=postgresql+asyncpg://postgres:password@postgres:5432/chat_db
+      - MAIN_BACKEND_URL=http://192.168.0.17:8080
+      - LOG_LEVEL=INFO
+    depends_on:
+      - redis
+      - postgres
+    volumes:
+      - ./app:/app/app:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8081/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Redis para cache y sesiones
+  redis:
+    image: redis:7-alpine
+    container_name: chat-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PostgreSQL (alternativa a MongoDB)
+  postgres:
+    image: postgres:15-alpine
+    container_name: chat-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=chat_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MongoDB (alternativa a PostgreSQL)
+  # mongodb:
+  #   image: mongo:7
+  #   container_name: chat-mongodb
+  #   ports:
+  #     - "27017:27017"
+  #   environment:
+  #     - MONGO_INITDB_ROOT_USERNAME=admin
+  #     - MONGO_INITDB_ROOT_PASSWORD=password
+  #     - MONGO_INITDB_DATABASE=chat_db
+  #   volumes:
+  #     - mongodb_data:/data/db
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+
+  # Nginx (opcional para proxy reverso)
+  nginx:
+    image: nginx:alpine
+    container_name: chat-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - chat-service
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+    driver: local
+  postgres_data:
+    driver: local
+  # mongodb_data:
+  #   driver: local
+
+networks:
+  default:
+    name: chat-network
+    driver: bridge
