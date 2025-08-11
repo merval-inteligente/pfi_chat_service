@@ -238,28 +238,17 @@ async def get_user_info(user_id: str, auth_header: str = None) -> Dict[str, str]
                     'email': user_data.get('data', {}).get('user', {}).get('email', '')
                 }
         
-        # Fallback para usuarios conocidos si no hay token válido
-        known_users = {
-            '688ac3765e7f9bb2d827766c': {'name': 'Nicolas', 'email': 'nicolas@example.com'}
-        }
-        
-        if user_id in known_users:
-            return known_users[user_id]
-        
-        # Fallback final: usar ID abreviado
+        # Fallback genérico - usar ID abreviado como nombre
         return {'name': f'Usuario {user_id[:8]}', 'email': ''}
         
     except Exception as e:
         print(f"Error obteniendo info del usuario: {e}")
-        # Fallback para usuarios conocidos en caso de error
-        known_users = {
-            '688ac3765e7f9bb2d827766c': {'name': 'Nicolas', 'email': 'nicolas@example.com'}
-        }
-        return known_users.get(user_id, {'name': 'Usuario', 'email': ''})
+        # Fallback genérico en caso de error
+        return {'name': f'Usuario {user_id[:8]}', 'email': ''}
 
-# Respuestas demo
-async def get_ai_response_demo(message: str, user_id: str, auth_header: str = None) -> str:
-    """Respuestas demo mejoradas"""
+# Sistema de respuestas de AI financiero
+async def generate_ai_response(message: str, user_id: str, auth_header: str = None) -> str:
+    """Generar respuesta del asistente financiero AI"""
     message_lower = message.lower()
     
     # Obtener información del usuario
@@ -386,7 +375,7 @@ async def send_message(chat_msg: ChatMessage, authorization: str = Header(None))
     """Enviar mensaje de chat"""
     try:
         # Generar respuesta con información del usuario
-        ai_response = await get_ai_response_demo(chat_msg.message, chat_msg.user_id, authorization)
+        ai_response = await generate_ai_response(chat_msg.message, chat_msg.user_id, authorization)
         
         # Guardar conversación
         storage_info, message_id = await memory_service.store_conversation(
@@ -430,5 +419,5 @@ async def storage_status():
 
 if __name__ == "__main__":
     import uvicorn
-    port = int(env_config.get('PORT', 8087))
+    port = int(env_config.get('PORT', 8084))
     uvicorn.run(app, host="0.0.0.0", port=port)
