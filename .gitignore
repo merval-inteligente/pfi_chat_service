@@ -48,12 +48,6 @@ Thumbs.db
 *.log
 logs/
 
-# Redis
-dump.rdb
-
-# Docker
-.dockerignore
-
 # Node modules (if any)
 node_modules/
 

@@ -1,3 +1,3 @@
 """
-Chat Service - Microservicio de Chat Inteligente
+Chat Service - Backend Organizado
 """

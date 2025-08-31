@@ -1,24 +1,12 @@
 # Dependencias esenciales para Chat Service
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-pydantic==2.5.0
-python-dotenv==1.0.0
+fastapi==0.115.14
+uvicorn[standard]==0.34.3
+pydantic==2.11.7
+python-dotenv==1.1.1
 
-# Base de datos
-motor==3.3.2
-pymongo==4.6.0
-redis==5.0.1
+# Base de datos MongoDB
+motor==3.7.1
+pymongo==4.13.2
 
-# HTTP requests para backend integration
-requests==2.31.0
-PyJWT==2.8.0
-
-# CORS y middleware
-python-multipart==0.0.6
-
-# OpenAI (si decides integrarlo después)
-# openai==1.3.8
-
-# Desarrollo y testing opcional
-# pytest==7.4.3
-# pytest-asyncio==0.21.1
+# HTTP requests para integración con backend
+requests==2.32.4

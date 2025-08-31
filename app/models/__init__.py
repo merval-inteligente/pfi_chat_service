@@ -1,5 +1,3 @@
 """
-Modelos
+Models - Modelos de datos
 """
-from .chat import *
-from .user import *
