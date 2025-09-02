@@ -66,3 +66,34 @@ async def get_my_chat_history(
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
+@router.get("/history/{user_id}")
+async def get_user_chat_history(
+    user_id: str,
+    limit: int = 20,
+    user_info: dict = Depends(get_user_identity)
+):
+    """Obtener historial de chat por user_id (compatibilidad - solo del usuario autenticado)"""
+    try:
+        # Por seguridad, solo permitir acceso al propio historial
+        authenticated_user_id = user_info['user_id']
+        
+        if user_id != authenticated_user_id:
+            raise HTTPException(
+                status_code=403, 
+                detail="Solo puedes acceder a tu propio historial"
+            )
+        
+        history = await memory_service.get_conversation_history(user_id, limit)
+        status = await memory_service.get_status()
+        
+        return {
+            "user_id": user_id,
+            "user_name": user_info['name'],
+            "total_messages": len(history),
+            "history": history,
+            "storage_status": status
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
