@@ -1,3 +1,0 @@
-"""
-Models - Modelos de datos
-"""

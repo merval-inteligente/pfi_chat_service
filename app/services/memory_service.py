@@ -6,7 +6,13 @@ Extraído de chat_service_real.py
 import motor.motor_asyncio
 from datetime import datetime, timezone
 from typing import Dict, List
-from app.core.config import MONGODB_URI, MONGODB_DB_NAME
+import os
+from dotenv import load_dotenv
+
+# Cargar configuración
+load_dotenv()
+MONGODB_URI = os.getenv('MONGODB_URL', 'mongodb+srv://admin:tRVIi8NhbKbzDj0q@cluster0.dad6cgj.mongodb.net/MervalDB?retryWrites=true&w=majority')
+MONGODB_DB_NAME = os.getenv('MONGODB_DATABASE', 'MervalDB')
 
 class MemoryService:
     def __init__(self):

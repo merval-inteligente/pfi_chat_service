@@ -1,3 +1,0 @@
-"""
-API - Rutas y endpoints
-"""
