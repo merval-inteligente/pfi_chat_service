@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  chat-api:
+    image: python:3.11-slim
+    container_name: chat-service
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "80:8084"
+    environment:
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+    command: >
+      bash -c "
+        pip install --no-cache-dir -r requirements.txt &&
+        uvicorn main:app --host 0.0.0.0 --port 8084 --reload
+      "
+    restart: unless-stopped
+    networks:
+      - chat-network
+
+networks:
+  chat-network:
+    driver: bridge
