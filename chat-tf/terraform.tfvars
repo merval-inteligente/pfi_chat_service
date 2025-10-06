@@ -5,9 +5,9 @@ instance_type = "t3.micro"
 key_name      = "millaveuade"
 
 # Red (reutilizando infraestructura de alertas)
-vpc_id        = "vpc-0a9472df1004235bd"
-subnet_id     = "subnet-0936477549098d860"
-intra_sg_id   = "sg-060fffa1e9ad51d8f"
+vpc_id        = "vpc-075ea12c12e95bae0"
+subnet_id     = "subnet-0b69dcddae1c49d91"
+intra_sg_id   = "sg-0efd45a3dff64e09f"
 
 # SSH
 enable_ssh = true
