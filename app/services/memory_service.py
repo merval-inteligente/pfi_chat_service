@@ -55,6 +55,7 @@ class MemoryService:
             try:
                 doc = {
                     "user_id": user_id,
+                    "conversation_id": user_id,  # Por ahora usamos user_id como conversation_id
                     "message": message,
                     "response": response,
                     "timestamp": timestamp,
@@ -71,6 +72,7 @@ class MemoryService:
             if user_id not in self.memory_fallback:
                 self.memory_fallback[user_id] = []
             self.memory_fallback[user_id].append({
+                "conversation_id": user_id,
                 "message": message,
                 "response": response,
                 "timestamp": timestamp.isoformat(),
@@ -93,6 +95,7 @@ class MemoryService:
                 conversations = []
                 async for doc in cursor:
                     conversations.append({
+                        "conversation_id": doc.get("conversation_id", user_id),
                         "message": doc["message"],
                         "response": doc["response"],
                         "timestamp": doc["timestamp"].isoformat() if isinstance(doc["timestamp"], datetime) else doc["timestamp"],

@@ -140,6 +140,36 @@ async def get_chat_history(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
+@app.get("/api/chat/history/{conversation_id}")
+async def get_conversation_by_id(
+    conversation_id: str,
+    limit: int = 10,
+    user_info: dict = Depends(get_user_identity)
+):
+    """Obtener mensajes de una conversación específica"""
+    try:
+        # Obtener historial completo y filtrar por conversation_id
+        history = await memory_service.get_conversation_history(user_info['user_id'], limit=100)
+        
+        # Filtrar mensajes de esta conversación
+        conversation_messages = [
+            msg for msg in history 
+            if msg.get('conversation_id') == conversation_id
+        ]
+        
+        # Limitar resultados
+        conversation_messages = conversation_messages[:limit]
+        
+        return {
+            "conversation_id": conversation_id,
+            "user_id": user_info['user_id'],
+            "total_messages": len(conversation_messages),
+            "messages": conversation_messages
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
 @app.get("/health")
 async def health_check():
     """Health check con estado completo del sistema"""
