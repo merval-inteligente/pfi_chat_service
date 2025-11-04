@@ -9,6 +9,7 @@ from typing import Dict, Optional
 import os
 from datetime import datetime, timezone
 import requests
+import jwt
 
 # Cargar variables de entorno
 from dotenv import load_dotenv
@@ -18,6 +19,7 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
 MONGODB_URL = os.getenv('MONGODB_URL', '')
 BACKEND_URL = os.getenv('BACKEND_URL', 'http://localhost:8080')
+JWT_SECRET = os.getenv('JWT_SECRET', 'default-secret-key')  # Agregar al .env
 
 # Importaciones de servicios
 from app.services.chat_service import generate_ai_response, check_ai_status
@@ -59,7 +61,7 @@ async def get_user_identity(authorization: str = Header(...)) -> Dict[str, str]:
     
     try:
         headers = {'Authorization': authorization}
-        response = requests.get(f"{BACKEND_URL}/api/auth/profile", headers=headers, timeout=10)
+        response = requests.get(f"{BACKEND_URL}/api/auth/profile", headers=headers, timeout=30)
         
         if response.status_code == 401:
             raise HTTPException(status_code=401, detail="Token inválido")
@@ -171,6 +173,7 @@ async def get_conversation_by_id(
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 @app.get("/health")
+@app.get("/api/chat/health")
 async def health_check():
     """Health check con estado completo del sistema"""
     storage_status = await memory_service.get_status()
