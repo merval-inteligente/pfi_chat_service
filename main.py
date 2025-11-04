@@ -39,8 +39,7 @@ class ChatResponse(BaseModel):
 app = FastAPI(
     title="Chat Service - Merval Inteligente",
     description="Servicio de chat con asistente especializado en MERVAL",
-    version="3.0.0",
-    root_path="/api/chat"
+    version="3.0.0"
 )
 
 # CORS
