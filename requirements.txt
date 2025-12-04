@@ -7,3 +7,4 @@ python-dotenv==1.0.0
 motor==3.7.1
 requests==2.32.4
 openai==1.99.3
+PyJWT==2.8.0
