@@ -8,6 +8,8 @@ services:
     container_name: chat-service
     ports:
       - "8084:8084"
+    volumes:
+      - ./.env:/app/.env:ro
     environment:
       - PYTHONUNBUFFERED=1
     env_file:

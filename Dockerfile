@@ -10,8 +10,9 @@ COPY requirements.txt .
 # Instalar dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el resto de la aplicación
-COPY . .
+# Copiar el código de la aplicación (excluyendo .env)
+COPY main.py .
+COPY app ./app
 
 # Exponer puerto 8084
 EXPOSE 8084
